@@ -49,8 +49,12 @@ pub fn CreateVec(comptime T: type) type {
             self.n_of_element = 0;
         }
 
-        pub fn lenght(self: @This()) usize {
+        pub fn length(self: @This()) usize {
             return self.n_of_element;
+        }
+
+        pub fn getAllElementsDupe(self: @This()) []T {
+            return self.allocator.dupe(T, self.items);
         }
 
         pub fn deinit(self: *@This()) void {

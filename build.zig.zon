@@ -47,7 +47,7 @@
         //    // This field is the source of truth; packages do not come from a `url`; they
         //    // come from a `hash`. `url` is just one of many possible mirrors for how to
         //    // obtain a package matching this `hash`.
-        //    //
+        //    //writeFileSeek
         //    // Uses the [multihash](https://multiformats.io/multihash/) format.
         //    .hash = "...",
         //
