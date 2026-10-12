@@ -28,14 +28,14 @@ pub fn build(b: *std.Build) void {
     // to our consumers. We must give it a name because a Zig package can expose
     // multiple modules and consumers will need to be able to specify which
     // module they want to access.
-    const mod = b.addModule("zlib", .{
+    const mod = b.addModule("Zlib", .{
         // The root source file is the "entry point" of this module. Users of
         // this module will only be able to access public declarations contained
         // in this file, which means that if you have declarations that you
         // intend to expose to consumers that were defined in other files part
         // of this module, you will have to make sure to re-export them from
         // the root file.
-        .root_source_file = b.path("src/zlib/root.zig"),
+        .root_source_file = b.path("src/root.zig"),
         // Later on we'll use this module as the root module of a test executable
         // which requires us to specify a target.
         .target = target,
@@ -111,9 +111,7 @@ pub fn build(b: *std.Build) void {
 
     // This allows the user to pass arguments to the application in the build
     // command itself, like this: `zig build run -- arg1 arg2 etc`
-    if (b.args) |args| {
-        run_cmd.addArgs(args);
-    }
+    run_cmd.addPassthruArgs();
 
     // Creates an executable that will run `test` blocks from the provided module.
     // Here `mod` needs to define a target, which is why earlier we made sure to
