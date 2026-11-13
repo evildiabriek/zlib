@@ -3,6 +3,7 @@ pub const fs = @import("fs.zig");
 pub const net = @import("net.zig");
 pub const vector = @import("vector.zig");
 pub const env = @import("env.zig");
+pub const string = @import("string.zig");
 const std = @import("std");
 pub fn init(gpa: std.mem.Allocator, IO: std.Io, em: *std.process.Environ.Map) !void {
     fs._init(IO, gpa);
