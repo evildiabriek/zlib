@@ -80,6 +80,10 @@ pub const string = struct {
         return std.mem.findScalarLast(u8, self.value, chr);
     }
 
+    pub fn findAfter(self: *@This(), idx: usize) ?usize {
+        return self.find(self.slicing(idx, null));
+    }
+
     pub fn split(self: *@This(), str: []const u8) ![][]const u8 {
         var array: [][]const u8 = try self.allocator.alloc([]const u8, str.len + 1);
         var array_idx: usize = 0;
@@ -187,6 +191,27 @@ pub const string = struct {
 
     pub fn slicing(self: *@This(), start: ?usize, end: ?usize) []u8 {
         return self.value[start orelse 0 .. end orelse self.value.len - 1];
+    }
+
+    pub fn isDigit(self: *@This()) bool {
+        for (self.value) |chr| {
+            if (std.ascii.isDigit(chr) == false) return false;
+        }
+        return true;
+    }
+
+    pub fn isAlphabetic(self: *@This()) bool {
+        for (self.value) |chr| {
+            if (std.ascii.isAlphabetic(chr) == false) return false;
+        }
+        return true;
+    }
+
+    pub fn isAlphanumeric(self: *@This()) bool {
+        for (self.value) |chr| {
+            if (std.ascii.isAlphanumeric(chr) == false) return false;
+        }
+        return true;
     }
 
     pub fn deinit(self: *@This()) void {
