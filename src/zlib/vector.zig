@@ -13,6 +13,13 @@ pub fn CreateVec(comptime T: type) type {
             return .{ .allocator = Init, .n_of_element = 0, .items = &[_]T{} };
         }
 
+        pub fn appendNoAlloc(self: *@This(), nv: T) !usize {
+            self.n_of_element += 1;
+            self.items = try self.allocator.realloc(self.items, self.n_of_element);
+            self.items[self.n_of_element - 1] = nv;
+            return self.n_of_element - 1;
+        }
+
         pub fn append(self: *@This(), new_value: T) !usize {
             self.n_of_element += 1;
             self.items = try self.allocator.realloc(self.items, self.n_of_element);
