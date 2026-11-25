@@ -60,8 +60,8 @@ pub fn CreateVec(comptime T: type) type {
             return self.n_of_element;
         }
 
-        pub fn getAllElementsDupe(self: @This()) []T {
-            return self.allocator.dupe(T, self.items);
+        pub fn getAllElementsDupe(self: @This()) ![]T {
+            return try self.allocator.dupe(T, self.items);
         }
 
         pub fn deinit(self: *@This()) void {
