@@ -26,8 +26,14 @@ pub fn _init(io: std.Io, gpa: std.mem.Allocator) void {
 fn cutPath(path: string) struct { []const u8, []const u8 } {
     var buffpath = path;
     if (std.mem.endsWith(u8, buffpath, "/")) buffpath = buffpath[0 .. buffpath.len - 1];
-    var idx = std.mem.findLast(u8, buffpath, "/");
-    if (idx.? == 0) idx.? = idx.? + 1;
+    const idx = blk: {
+        if (std.mem.findScalarLast(u8, buffpath, "/")) |idx| {
+            break :blk idx;
+        }
+        return .{
+            buffpath, buffpath,
+        };
+    };
     return .{ buffpath[0..idx.?], buffpath[idx.? + 1 .. buffpath.len] };
 }
 
