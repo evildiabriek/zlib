@@ -34,7 +34,7 @@ fn cutPath(path: string) struct { []const u8, []const u8 } {
             buffpath, buffpath,
         };
     };
-    return .{ buffpath[0..idx.?], buffpath[idx.? + 1 .. buffpath.len] };
+    return .{ buffpath[0..idx], buffpath[idx + 1 .. buffpath.len] };
 }
 
 pub const Folder = struct {
@@ -121,15 +121,23 @@ pub const File = struct {
 
     pub fn readFile(path: string, limit: ?std.Io.Limit) ![]const u8 {
         if (!self.ifExist(path)) return FsFileError.NotExist;
+        var b = true;
         const part = cutPath(path);
-        var tmpdir = try std.Io.Dir.cwd().openDir(IO, part.@"0", .{});
-        defer tmpdir.close(IO);
+        var tmpdir = blk: {
+            break :blk std.Io.Dir.cwd().openDir(IO, part.@"0", .{}) catch {
+                b = false;
+                break :blk std.Io.Dir.cwd();
+            };
+        };
+        defer {
+            if (b) tmpdir.close(IO);
+        }
         return std.Io.Dir.readFileAlloc(tmpdir, IO, part.@"1", allocator, limit orelse .unlimited);
     }
 
     pub fn writeFile(path: string, content: string) !void {
         if (!self.ifExist(path)) return FsFileError.NotExist;
-        var f = try std.Io.Dir.cwd().openFile(IO, path, .{});
+        var f = try std.Io.Dir.cwd().openFile(IO, path, .{ .mode = .write_only });
         defer f.close(IO);
         var buf: [10524]u8 = undefined;
         var fw = f.writer(IO, &buf);
