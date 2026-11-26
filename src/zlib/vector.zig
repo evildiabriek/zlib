@@ -62,8 +62,8 @@ pub fn CreateVec(comptime T: type) type {
             return try self.allocator.dupe(T, self.items);
         }
 
-        pub fn resize(self: *@This(), size: usize) void {
-            self.items = self.allocator.realloc(self.items, size);
+        pub fn resize(self: *@This(), size: usize) !void {
+            self.items = try self.allocator.realloc(self.items, size);
             self.n_of_element = size;
         }
 
