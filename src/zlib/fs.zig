@@ -116,14 +116,14 @@ pub const File = struct {
     pub fn readFile(path: string, limit: ?std.Io.Limit) ![]const u8 {
         if (!self.ifExist(path)) return FsFileError.NotExist;
         const part = cutPath(path);
-        var tmpdir = try std.Io.Dir.openDirAbsolute(IO, part.@"0", .{});
+        var tmpdir = try std.Io.Dir.cwd().openDir(IO, part.@"0", .{});
         defer tmpdir.close(IO);
         return std.Io.Dir.readFileAlloc(tmpdir, IO, part.@"1", allocator, limit orelse .unlimited);
     }
 
     pub fn writeFile(path: string, content: string) !void {
         if (!self.ifExist(path)) return FsFileError.NotExist;
-        var f = try std.Io.Dir.openFileAbsolute(IO, path, .{ .mode = .read_write });
+        var f = try std.Io.Dir.cwd().openDir(IO, path, .{});
         defer f.close(IO);
         var buf: [10524]u8 = undefined;
         var fw = f.writer(IO, &buf);
