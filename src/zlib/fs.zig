@@ -27,7 +27,7 @@ fn cutPath(path: string) struct { []const u8, []const u8 } {
     var buffpath = path;
     if (std.mem.endsWith(u8, buffpath, "/")) buffpath = buffpath[0 .. buffpath.len - 1];
     const idx = blk: {
-        if (std.mem.findScalarLast(u8, buffpath, "/")) |idx| {
+        if (std.mem.findScalarLast(u8, buffpath, '/')) |idx| {
             break :blk idx;
         }
         return .{
