@@ -91,7 +91,7 @@ pub const File = struct {
     const self = @This();
 
     pub fn ifExist(path: string) bool {
-        _ = std.Io.Dir.openFileAbsolute(IO, path, .{}) catch {
+        _ = std.Io.Dir.cwd().openFile(IO, path, .{}) catch {
             return false;
         };
         return true;
