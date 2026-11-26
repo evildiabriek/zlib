@@ -123,7 +123,7 @@ pub const File = struct {
 
     pub fn writeFile(path: string, content: string) !void {
         if (!self.ifExist(path)) return FsFileError.NotExist;
-        var f = try std.Io.Dir.cwd().openDir(IO, path, .{});
+        var f = try std.Io.Dir.cwd().openFile(IO, path, .{});
         defer f.close(IO);
         var buf: [10524]u8 = undefined;
         var fw = f.writer(IO, &buf);
