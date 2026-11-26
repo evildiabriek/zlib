@@ -48,12 +48,10 @@ pub fn CreateVec(comptime T: type) type {
         }
 
         pub fn clear(self: *@This()) !void {
-            var n: usize = 0;
-            while (n < self.n_of_element) {
-                try self.remove(n);
-                n += 1;
+            while (0 < self.n_of_element) {
+                try self.remove(self.n_of_element - 1);
+                self.n_of_element -= 1;
             }
-            self.n_of_element = 0;
         }
 
         pub fn length(self: @This()) usize {
@@ -64,12 +62,16 @@ pub fn CreateVec(comptime T: type) type {
             return try self.allocator.dupe(T, self.items);
         }
 
+        pub fn resize(self: *@This(), size: usize) void {
+            self.items = self.allocator.realloc(self.items, size);
+            self.n_of_element = size;
+        }
+
         pub fn deinit(self: *@This()) void {
-            var i: usize = 0;
             if (comptime @typeInfo(T) == .pointer and @typeInfo(T).pointer.size == .slice) {
-                while (i < self.n_of_element) {
-                    self.allocator.free(self.items[i]);
-                    i += 1;
+                while (0 < self.n_of_element) {
+                    self.allocator.free(self.items[self.n_of_element - 1]);
+                    self.n_of_element -= 1;
                 }
             }
             self.allocator.free(self.items);
