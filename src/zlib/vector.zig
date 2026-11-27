@@ -65,7 +65,7 @@ pub fn CreateVec(comptime T: type) type {
 
         pub fn resize(self: *@This(), size: usize) !void {
             if (self.n_of_element > size) {
-                for (self.items[self.n_of_element..size]) |itm| {
+                for (self.items[self.n_of_element - 1 .. size]) |itm| {
                     self.allocator.free(itm);
                 }
             }
