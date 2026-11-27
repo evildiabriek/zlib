@@ -9,8 +9,8 @@ pub fn CreateVec(comptime T: type) type {
         items: []T,
         allocator: std.mem.Allocator,
         n_of_element: usize,
-        pub fn init(Init: std.mem.Allocator) @This() {
-            return .{ .allocator = Init, .n_of_element = 0, .items = &[_]T{} };
+        pub fn init(gpa: std.mem.Allocator) @This() {
+            return .{ .allocator = gpa, .n_of_element = 0, .items = &[_]T{} };
         }
 
         pub fn appendNoAlloc(self: *@This(), nv: T) !usize {
@@ -41,7 +41,9 @@ pub fn CreateVec(comptime T: type) type {
             const max_idx = self.n_of_element - 1;
             var m_idx = idx;
             while (m_idx < max_idx) {
-                self.allocator.free(self.items[m_idx]);
+                if (comptime @typeInfo(T) == .pointer and @typeInfo(T).pointer.size == .slice) {
+                    self.allocator.free(self.items[m_idx]);
+                }
                 self.items[m_idx] = self.items[m_idx + 1];
                 m_idx += 1;
             }
@@ -65,8 +67,10 @@ pub fn CreateVec(comptime T: type) type {
 
         pub fn resize(self: *@This(), size: usize) !void {
             if (self.n_of_element > size) {
-                for (self.items[self.n_of_element - 1 .. size]) |itm| {
-                    self.allocator.free(itm);
+                if (comptime @typeInfo(T) == .pointer and @typeInfo(T).pointer.size == .slice) {
+                    for (self.items[size..]) |itm| {
+                        self.allocator.free(itm);
+                    }
                 }
             }
             self.items = try self.allocator.realloc(self.items, size);
